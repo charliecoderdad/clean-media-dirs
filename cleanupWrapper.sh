@@ -3,7 +3,7 @@ cd /home/charlie/projects/cleanuptorrentfs
 LOGFILE="output.log"
 
 date > $LOGFILE
-bash /home/plexMedia/setPermissions.sh
+bash /ssd/plexMedia/setPermissions.sh
 echo "" >> $LOGFILE
 echo "Cleaning up TV folders" >> $LOGFILE
 echo "======================" >> $LOGFILE
