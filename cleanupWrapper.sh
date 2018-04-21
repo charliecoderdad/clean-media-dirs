@@ -1,4 +1,4 @@
-cd /home/charlie/projects/cleanuptorrentfs
+cd /home/charlie/github/clean-torrent-dirs
 
 LOGFILE="output.log"
 
