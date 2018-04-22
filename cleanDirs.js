@@ -52,7 +52,6 @@ function cleanDir(dir) {
   moveGoodFilesToBase(dir)
   // Delete all directories within the basepath
   deleteAllDirsInBasedir(dir);
-  console.log("");
 }
 
 function deleteAllDirsInBasedir(dir) {
