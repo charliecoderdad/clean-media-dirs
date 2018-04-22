@@ -4,7 +4,6 @@ var execSync = require('child_process').execSync;
 var rmdir = require('rimraf');
 var argv = require('yargs');
 var recursiveRead = require('fs-readdir-recursive');
-var transmissionUtils = require('./transmissionUtils.js');
 var Transmission = require('transmission');
 
 var extensionsToSearch = [".mkv", ".mp4", ".avi", ".mpg", ".mpeg", ".asf", ".wmv", ".m4v", ".sav"];
@@ -57,7 +56,7 @@ myPromise.then(function(result) {
     console.log("Exiting without cleaning due to active torrents.");
     process.exit(0);
   } else {
-    console.log("No active torrents");
+    console.log("No active torrents found.  Proceeding with clean up...");
   }
   var directories_to_clean = findDirectoriesToClean();
 
