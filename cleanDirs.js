@@ -86,6 +86,21 @@ function cleanDir(dir) {
   moveGoodFilesToBase(dir)
   // Delete all directories within the basepath
   deleteAllDirsInBasedir(dir);
+  // Delete all files that contain any from of 'sample' string
+  deleteAllSampleFilesInBasedir(dir);
+}
+
+function deleteAllSampleFilesInBasedir(dir) {
+  var files = fs.readdirSync(dir);
+  files.forEach(function(file) {
+    if (file.toUpperCase().indexOf('SAMPLE') !== -1) {
+      file = path.resolve(dir, file);
+      console.log("Deleting Sample File: " + file);
+      if (!argv.testonly) {
+        fs.unlinkSync(file);
+      }
+    }
+  });
 }
 
 function deleteAllDirsInBasedir(dir) {
