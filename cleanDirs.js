@@ -4,6 +4,8 @@ var execSync = require('child_process').execSync;
 var rmdir = require('rimraf');
 var argv = require('yargs');
 var recursiveRead = require('fs-readdir-recursive');
+var transmissionUtils = require('./transmissionUtils.js');
+var Transmission = require('transmission');
 
 var extensionsToSearch = [".mkv", ".mp4", ".avi", ".mpg", ".mpeg", ".asf", ".wmv", ".m4v", ".sav"];
 var foundFiles = [];
@@ -24,11 +26,44 @@ var argv = require('yargs')
   .help('h')
   .argv;
 
-// Get directories in argv.base_scan_dir that contain the trigger_file (.clean_me)
-var directories_to_clean = findDirectoriesToClean();
+var transmission = new Transmission({
+	host: "192.168.1.25",
+	port: 9091,
+	username: "",
+	password: ""
+});
 
-directories_to_clean.forEach(function(dir) {
-  cleanDir(dir);
+var myPromise = new Promise(function(resolve, reject) {
+  transmission.active(function(err, result) {
+    if (err) {
+      console.log("ERROR: " + err);
+      process.exit(1);
+    } else {
+      if (result.torrents.length > 0) {
+        console.log("Active torrents found...");
+        result.torrents.forEach(function(torrent) {
+          console.log("Active torrent: " + torrent.name);
+        });
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    }
+  });
+});
+
+myPromise.then(function(result) {
+  if (result) {
+    console.log("Exiting without cleaning due to active torrents.");
+    process.exit(0);
+  } else {
+    console.log("No active torrents");
+  }
+  var directories_to_clean = findDirectoriesToClean();
+
+  directories_to_clean.forEach(function(dir) {
+    cleanDir(dir);
+  });
 });
 
 function findDirectoriesToClean() {
