@@ -1,3 +1,5 @@
 output.log
 node_modules
 package-lock.json
+testdir
+testdir.bak
