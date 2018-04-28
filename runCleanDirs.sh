@@ -1,7 +1,7 @@
 cd /home/charlie/github/clean-torrent-dirs
 LOGFILE="output.log"
 
-date | --append tee $LOGFILE
+date | tee --append $LOGFILE
 echo "" | tee --append $LOGFILE
 echo "Cleaning up target folders in /ssd/plexMedia" | tee --append $LOGFILE
 echo "--------------------------------------------" | tee --append $LOGFILE
