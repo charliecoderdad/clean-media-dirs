@@ -26,10 +26,10 @@ var argv = require('yargs')
   .argv;
 
 var transmission = new Transmission({
-	host: "192.168.1.25",
+	host: "192.168.0.69",
 	port: 9091,
-	username: "",
-	password: ""
+	username: "admin",
+	password: "admin"
 });
 
 var myPromise = new Promise(function(resolve, reject) {
