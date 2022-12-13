@@ -6,8 +6,7 @@ var argv = require('yargs');
 var recursiveRead = require('fs-readdir-recursive');
 var Transmission = require('transmission');
 
-var extensionsToSearch = [".mkv", ".mp4", ".avi", ".mpg", ".mpeg", ".asf", ".wmv", ".m4v", ".sav"];
-var foundFiles = [];
+var extensionsToSearch = [".srt", ".mkv", ".mp4", ".avi", ".mpg", ".mpeg", ".asf", ".wmv", ".m4v", ".sav", ".srt"];
 var trigger_file = ".clean_me";
 
 var argv = require('yargs')
@@ -26,7 +25,7 @@ var argv = require('yargs')
   .argv;
 
 var transmission = new Transmission({
-	host: "192.168.0.69",
+	host: "192.168.1.102",
 	port: 9091,
 	username: "admin",
 	password: "admin"
@@ -52,11 +51,11 @@ var myPromise = new Promise(function(resolve, reject) {
 });
 
 myPromise.then(function(result) {
-  if (result) {
+  if (result && argv.testonly != true) {
     console.log("Exiting without cleaning due to active torrents.");
     process.exit(0);
   } else {
-    console.log("No active torrents found.  Proceeding with clean up...");
+    console.log("No active torrents found or in test mode.  Proceeding with clean up...");
   }
   var directories_to_clean = findDirectoriesToClean();
 
@@ -120,21 +119,6 @@ function deleteAllDirsInBasedir(dir) {
   }
 }
 
-function moveGoodFilesToBase(dir) {
-  var files = getMovieFileLocationsArray(dir);
-  for (var i = 0; i < files.length; i++) {
-    fileBasePath = path.dirname(files[i]);
-    fileName = path.basename(files[i]);
-    // If the found file is not in the root path then we need to move it there
-    if (fileBasePath !== dir) {
-      console.log("Moving file " + files[i] + " to " + path.join(dir, fileName));
-      if (!argv.testonly) {
-        fs.renameSync(files[i], path.join(dir, fileName));
-      }
-    }
-  }
-}
-
 function cleanBasePath(dir) {
   var fileList = fs.readdirSync(dir);
   for (var i = 0; i < fileList.length; i++) {
@@ -149,7 +133,22 @@ function cleanBasePath(dir) {
   }
 }
 
-function getMovieFileLocationsArray(dir) {
+function moveGoodFilesToBase(dir) {
+  var files = getCurrentKeeperFileLocationsArray(dir);
+  for (var i = 0; i < files.length; i++) {
+    fileBasePath = path.dirname(files[i]);
+    fileName = path.basename(files[i]);
+    // If the found file is not in the root path then we need to move it there
+    if (path.dirname(fileBasePath) !== path.dirname(dir)) {
+      console.log("Moving file " + files[i] + " to " + path.join(dir, fileName));
+      if (!argv.testonly) {
+        fs.renameSync(files[i], path.join(dir, fileName));
+      }
+    }
+  }
+}
+
+function getCurrentKeeperFileLocationsArray(dir) {
   var returnArray = [];
   for (var i = 0; i < extensionsToSearch.length; i++) {
     var command = 'find ' + dir + ' -iname *' + extensionsToSearch[i];
@@ -164,13 +163,6 @@ function getMovieFileLocationsArray(dir) {
     }
   }
   return returnArray;
-}
-
-//Debug function to print the foundFiles array
-function printArray(array) {
-  for (var i = 0; i < array.length; i++) {
-    console.log(i + ": " + array[i]);
-  }
 }
 
 function verifyValidDirectory(dir) {

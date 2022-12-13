@@ -31,7 +31,6 @@ argv = argv.option('directory', {
 })
 .argv;
 
-var fitlerExpression = "";
 if (!argv.filterEpisodeExpression) {
   filterExpression = 'E\\d\\d';
 } else {
